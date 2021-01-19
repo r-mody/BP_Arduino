@@ -1,5 +1,8 @@
 #include <Wire.h>
 
+//Array to be sent to pressure sensor
+int Cmd[3]={0xAA, 0x00, 0x00};
+
 void setup() {
  //I2C setup
   Wire.begin();        // join i2c bus (address optional for master)
@@ -28,12 +31,21 @@ void loop() {
 //  delay (5000);
  
 //Reading pressure sensor  
-  Wire.requestFrom(24, 4);    // request 6 bytes from slave device #8
+  Wire.beginTransmission(0x18); 
+                              
+  Wire.write(Cmd[0]);
+  Wire.write(Cmd[1]);
+  Wire.write(Cmd[2]);               
+  Wire.endTransmission();
+
+  delay (10);
+  
+  Wire.requestFrom(0x18, 4);    // request 4 bytes from slave device 0x18
 
   while (Wire.available()) { // slave may send less than requested
-    float c = Wire.read(); // receive a byte as character
-    Serial.println(c);         // print the character
+    uint8_t c = Wire.read(); // receive a byte as character
+    Serial.print(c);         // print the character
   }
-
+  Serial.println();
   delay(1000);
 }
