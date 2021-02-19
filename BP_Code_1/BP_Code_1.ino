@@ -4,7 +4,7 @@
 int Cmd[3]={0xAA, 0x00, 0x00};
 
 //Global Varibles
-int data[]={0,0,0};
+int data[4]={0,0,0,0};
 uint8_t data1=0;
 int count = 0;
 long int datasft1=0;
@@ -54,10 +54,11 @@ void loop() {
   Wire.requestFrom(0x18, 4);    // request 4 bytes from slave device 0x18
   
   while (Wire.available()) { 
+    //Serial.println(Wire.read());
     data1 = Wire.read();
     data[count]=data1;
     count=count+1;
-    delay(10);
+    //delay(10);
   }
   //Serial.print("status=");         
   //Serial.println(data[0]);// First set of data is actually the status byte
@@ -80,8 +81,8 @@ void loop() {
   //Serial.println(datacombfnl);
 
   // Calculating the actual pressure based off data
-  long int Output_Max = 15099494;
-  long int Output_Min = 1677722;
+  long int Output_Max = .225*pow(2,24);
+  long int Output_Min = .025*pow(2,24);
   int P_Max = 300;
   int P_Min = 0;
   
@@ -89,8 +90,14 @@ void loop() {
   Pressure = (((datacombfnl-Output_Min)*(P_Max-P_Min))/(Output_Max-Output_Min))+P_Min;
 
   Serial.println(Pressure);
+//  while (Pressure <-15){
+//    
+//    digitalWrite(6,HIGH);
+//    digitalWrite(7,HIGH); 
+//    delay(10); 
+//  }
+//  digitalWrite(7,LOW);
   
-
 
   delay(1000);
   count=0;
